@@ -1,0 +1,280 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kwaliteiten Oefening</title>
+<link rel="icon" type="image/png" href="toolbox.png">
+<style>
+  @font-face {
+    font-family: 'Safiro';
+    src: url('Safiro.otf') format('opentype');
+  }
+  body {
+    font-family: 'Safiro', sans-serif;
+    background-color: #EDF3F9;
+    color: #1F59FF;
+    margin: 0;
+    padding: 0;
+  }
+  .container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    position: relative;
+  }
+  .step {
+    display: none;
+  }
+  .step.active {
+    display: block;
+  }
+  button {
+    background-color: #1F59FF;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 10px 0;
+    border-radius: 5px;
+  }
+  .kwaliteiten {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .kwaliteit {
+    background-color: #0000D0;
+    color: #F5F5F5;
+    padding: 8px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .kwaliteit.selected {
+    background-color: #00D0FF;
+    color: #1F59FF;
+  }
+  .kwaliteit.removed {
+    background-color: #EDF3F9;
+    color: #0000D0;
+    border: 1px solid #1F59FF;
+  }
+  .teller {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 18px;
+    background-color: #1F59FF;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  .zig-logo {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 120px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="teller" id="teller">Selected: 0/25</div>
+  
+  <!-- Step 1 -->
+  <div class="step active" id="step1">
+    <h2>Step 1: Choose 25 qualities</h2>
+    <p>What makes you unique and special, what is your 'essence'? Click on a quality from the list or add your own.</p>
+    <input type="text" id="customQuality" placeholder="Add your own quality">
+    <button onclick="addCustomQuality()">Add</button>
+    <div class="kwaliteiten" id="kwaliteiten-list"></div>
+    <button onclick="nextStep(2)" id="next-button" disabled>Go to step 2</button>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step" id="step2">
+    <h2>Step 2: Imagine crossing a bridge</h2>
+    <p>The Gatekeeper appears and demands 10 qualities. Which ones hold the least value to you?</p>
+    <div class="kwaliteiten" id="selected-list-step2"></div>
+    <button onclick="showRoundSummary(2)" id="step2-next" disabled>Show summary</button>
+  </div>
+
+  <!-- Summary after Step 2 -->
+  <div class="step" id="summary-step2">
+    <h2>Summary after Step 2</h2>
+    <h4>Discarded qualities:</h4>
+    <div id="removed-round2" class="kwaliteiten"></div>
+    <h4>Remaining qualities:</h4>
+    <div id="remaining-after-round2" class="kwaliteiten"></div>
+    <button onclick="nextStep(3)">Go to step 3</button>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step" id="step3">
+    <h2>Step 3: The Gatekeeper follows you</h2>
+    <p>He demands 5 more qualities. Choose wisely.</p>
+    <div class="kwaliteiten" id="selected-list-step3"></div>
+    <button onclick="showRoundSummary(3)" id="step3-next" disabled>Show summary</button>
+  </div>
+
+  <!-- Summary after Step 3 -->
+  <div class="step" id="summary-step3">
+    <h2>Summary after Step 3</h2>
+    <h4>Discarded qualities:</h4>
+    <div id="removed-round3" class="kwaliteiten"></div>
+    <h4>Remaining qualities:</h4>
+    <div id="remaining-after-round3" class="kwaliteiten"></div>
+    <button onclick="nextStep(4)">Go to step 4</button>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step" id="step4">
+    <h2>Step 4: The final bridge</h2>
+    <p>You have 10 qualities left. The Gatekeeper wants 5 more. Think carefully.</p>
+    <div class="kwaliteiten" id="selected-list-step4"></div>
+    <button onclick="showRoundSummary(4)" id="step4-next" disabled>Show summary</button>
+  </div>
+
+  <!-- Summary after Step 4 -->
+  <div class="step" id="summary-step4">
+    <h2>Summary after Step 4</h2>
+    <h4>Discarded qualities:</h4>
+    <div id="removed-round4" class="kwaliteiten"></div>
+    <h4>Remaining qualities:</h4>
+    <div id="remaining-after-round4" class="kwaliteiten"></div>
+    <button onclick="nextStep(5)">Go to Final Summary</button>
+  </div>
+
+  <!-- Final Step -->
+  <div class="step" id="step5">
+    <h2>Your Core Qualities</h2>
+    <div class="kwaliteiten" id="final-selection"></div>
+    <h4>Discarded in round 2:</h4>
+    <div id="final-removed-round2" class="kwaliteiten"></div>
+    <h4>Discarded in round 3:</h4>
+    <div id="final-removed-round3" class="kwaliteiten"></div>
+    <h4>Discarded in round 4:</h4>
+    <div id="final-removed-round4" class="kwaliteiten"></div>
+    <button onclick="window.print()">Print Summary</button>
+  </div>
+</div>
+
+<img src="zig-logo.png" alt="Zig Logo" class="zig-logo">
+
+<script>
+  const qualities = [
+    "Abundance","Adventure","Affection","Advocacy","Attention","Authenticity","Authority","Autonomy",
+    "Balance","Beauty","Benefit","Carefulness","Challenge","Cheerfulness","Clarity","Commitment",
+    "Comfort","Compassion","Competence","Connectedness","Connection","Contentment","Courage",
+    "Creativity","Determination","Discipline","Dreams","Ease","Empathy","Engagement","Energy",
+    "Enthusiasm","Erudition","Essence","Excellence","Faith","Flexibility","Flourishing","Forgiveness",
+    "Freedom","Friendship","Fulfillment","Fun","Grace","Gratitude","Growth","Happiness","Harmony",
+    "Healing","Health","Helpfulness","Honesty","Humor","Humility","Imagination","Inner peace",
+    "Inspiration","Integrity","Justice","Joy","Knowledge","Learning","Liberation","Lightheartedness",
+    "Loyalty","Love","Loving","Modesty","Musicality","Naturalness","Openness","Orderliness",
+    "Optimism","Patience","Passion","Peace","Perseverance","Persistence","Potential","Protection",
+    "Pioneering","Reliability","Relationship","Renewal","Respect","Resilience","Resourcefulness",
+    "Responsibility","Reverence","Self-confidence","Self-knowledge","Self-sufficiency","Service-oriented",
+    "Sharpness","Simplicity","Sobriety","Spontaneity","Strength","Subtlety","Success","Support",
+    "Tenderness","Tolerance","Transformation","Trust","Truth","Versatility","Victory","Virtuosity",
+    "Vitality","Willingness","Wisdom"
+  ];
+
+  let selectedQualities = [];
+  let maxSelection = 25;
+  let maxRemovals = 10;
+  const removedPerRound = { round2: [], round3: [], round4: [] };
+
+  const listContainer = document.getElementById("kwaliteiten-list");
+
+  qualities.forEach(q => {
+    const div = document.createElement("div");
+    div.classList.add("kwaliteit");
+    div.innerText = q;
+    div.onclick = () => toggleQuality(div, q);
+    listContainer.appendChild(div);
+  });
+
+  function toggleQuality(div, quality) {
+    if (selectedQualities.includes(quality)) {
+      selectedQualities = selectedQualities.filter(q => q !== quality);
+      div.classList.remove("selected");
+    } else if (selectedQualities.length < maxSelection) {
+      selectedQualities.push(quality);
+      div.classList.add("selected");
+    }
+    document.getElementById("teller").innerText = `Selected: ${selectedQualities.length}/${maxSelection}`;
+    document.getElementById("next-button").disabled = selectedQualities.length !== maxSelection;
+  }
+
+  function addCustomQuality() {
+    const input = document.getElementById("customQuality");
+    const quality = input.value.trim();
+    if (quality && !qualities.includes(quality) && !selectedQualities.includes(quality)) {
+      selectedQualities.push(quality);
+      const div = document.createElement("div");
+      div.classList.add("kwaliteit", "selected");
+      div.innerText = quality;
+      div.onclick = () => toggleQuality(div, quality);
+      listContainer.appendChild(div);
+      document.getElementById("teller").innerText = `Selected: ${selectedQualities.length}/${maxSelection}`;
+      document.getElementById("next-button").disabled = selectedQualities.length !== maxSelection;
+      input.value = '';
+    }
+  }
+
+  function nextStep(stepNum) {
+    document.querySelector(".step.active").classList.remove("active");
+    document.getElementById(`step${stepNum}`).classList.add("active");
+    
+    if (stepNum === 2 || stepNum === 3 || stepNum === 4) {
+      const stepList = document.getElementById(`selected-list-step${stepNum}`);
+      stepList.innerHTML = selectedQualities.map(q => `<div class="kwaliteit">${q}</div>`).join('');
+      maxSelection = stepNum === 2 ? 10 : 5; 
+      maxRemovals = maxSelection;
+      document.getElementById("teller").innerText = `Selected: 0/${maxRemovals}`;
+      const stepNextButton = document.getElementById(`step${stepNum}-next`);
+      stepNextButton.disabled = true;
+
+      const qualitiesDivs = stepList.querySelectorAll(".kwaliteit");
+      qualitiesDivs.forEach(div => {
+        div.onclick = () => removeQuality(div, stepNum);
+      });
+    } else if (stepNum === 5) {
+      displayFinalSelection();
+    }
+  }
+
+  function removeQuality(div, stepNum) {
+    const quality = div.innerText;
+    if (!div.classList.contains("removed")) {
+      if (removedPerRound[`round${stepNum}`].length < maxRemovals) {
+        div.classList.add("removed");
+        removedPerRound[`round${stepNum}`].push(quality);
+        selectedQualities = selectedQualities.filter(q => q !== quality);
+      }
+      document.getElementById("teller").innerText = `Selected: ${removedPerRound[`round${stepNum}`].length}/${maxRemovals}`;
+      document.getElementById(`step${stepNum}-next`).disabled = removedPerRound[`round${stepNum}`].length !== maxRemovals;
+    }
+  }
+
+  function showRoundSummary(stepNum) {
+    document.querySelector(".step.active").classList.remove("active");
+    document.getElementById(`summary-step${stepNum}`).classList.add("active");
+
+    document.getElementById(`removed-round${stepNum}`).innerHTML = removedPerRound[`round${stepNum}`].map(q => `<div class="kwaliteit removed">${q}</div>`).join('');
+    document.getElementById(`remaining-after-round${stepNum}`).innerHTML = selectedQualities.map(q => `<div class="kwaliteit">${q}</div>`).join('');
+  }
+
+  function displayFinalSelection() {
+    document.getElementById("final-selection").innerHTML = selectedQualities.map(q => `<div class="kwaliteit">${q}</div>`).join('');
+    document.getElementById("final-removed-round2").innerHTML = removedPerRound.round2.map(q => `<div class="kwaliteit removed">${q}</div>`).join('');
+    document.getElementById("final-removed-round3").innerHTML = removedPerRound.round3.map(q => `<div class="kwaliteit removed">${q}</div>`).join('');
+    document.getElementById("final-removed-round4").innerHTML = removedPerRound.round4.map(q => `<div class="kwaliteit removed">${q}</div>`).join('');
+  }
+</script>
+</body>
+</html>
