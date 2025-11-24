@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Quality Game</title>
+  <style>
+    @font-face {
+      font-family: 'Safiro';
+      src: url('Safiro-Regular.otf') format('opentype');
+      font-weight: normal;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Safiro';
+      src: url('Safiro-Bold.otf') format('opentype');
+      font-weight: bold;
+      font-style: normal;
+    }
+
+    body {
+      font-family: 'Safiro', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #EDF3F9;
+      color: #0000D0;
+      position: relative;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 500px;
+      padding: 40px;
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 0.5em;
+      color: #1F59FF;
+      font-weight: bold;
+    }
+
+    p {
+      font-size: 1.2em;
+      margin-bottom: 1.5em;
+      color: #0000D0;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .button {
+      font-size: 1em;
+      padding: 12px 24px;
+      background-color: #00D0FF;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+      font-weight: bold;
+    }
+
+    .button:hover {
+      background-color: #1F59FF;
+    }
+
+    .logo {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      width: 100px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>The Quality Game</h1>
+    <p>Welcome! Please select your preferred language to proceed.</p>
+    <div class="button-container">
+      <a href="https://soliddutch.github.io/kwaliteitenspel/" class="button">Dutch</a>
+      <a href="https://solidenglish.github.io/qualitygame/" class="button">English</a>
+    </div>
+  </div>
+  <img src="logo.png" alt="Zig Logo" class="logo">
+</body>
+</html>
